@@ -1,0 +1,401 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Be my valentine? 💘</title>
+  <style>
+    :root{
+      --bg1:#ffd1e8;
+      --bg2:#ffb6d9;
+      --card:#fff7fb;
+      --text:#3a0b26;
+      --yes:#ff3d9a;
+      --yes2:#ff76b9;
+      --no:#8b2b5f;
+      --shadow: 0 18px 60px rgba(58, 11, 38, 0.18);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      min-height:100vh;
+      font-family: ui-rounded, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      color:var(--text);
+      overflow:hidden;
+      background: radial-gradient(1200px 700px at 30% 10%, var(--bg1), transparent 60%),
+                  radial-gradient(1000px 800px at 70% 90%, var(--bg2), transparent 55%),
+                  linear-gradient(135deg, #ffe3f2, #ffc2e1);
+    }
+
+    /* floating hearts */
+    .heart {
+      position:absolute;
+      font-size: 18px;
+      opacity: .25;
+      animation: floatUp linear forwards;
+      filter: blur(0.2px);
+      user-select:none;
+      pointer-events:none;
+    }
+    @keyframes floatUp {
+      from { transform: translateY(20vh) scale(.8) rotate(0deg); opacity: .0; }
+      10% { opacity: .22; }
+      to   { transform: translateY(-120vh) scale(1.4) rotate(360deg); opacity: .0; }
+    }
+
+    .wrap{
+      position:relative;
+      width:min(520px, 92vw);
+      margin: 10vh auto 0;
+      padding: 22px;
+      border-radius: 28px;
+      background: rgba(255,255,255,0.72);
+      backdrop-filter: blur(10px);
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(255, 77, 156, 0.18);
+      text-align:center;
+    }
+
+    h1{
+      margin: 6px 0 8px;
+      font-size: clamp(26px, 5vw, 40px);
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+    }
+    .sub{
+      margin: 0 auto 16px;
+      width: min(42ch, 100%);
+      font-size: 15px;
+      opacity:.88;
+    }
+
+    .gifbox{
+      width: min(360px, 86vw);
+      aspect-ratio: 1 / 1;
+      margin: 14px auto 10px;
+      border-radius: 24px;
+      background: linear-gradient(135deg, rgba(255,61,154,.18), rgba(255,118,185,.12));
+      border: 1px dashed rgba(255,61,154,.35);
+      display:grid;
+      place-items:center;
+      position:relative;
+      overflow:hidden;
+    }
+    .gifbox .emoji{
+      font-size: 88px;
+      transform: rotate(-6deg);
+      animation: bop 1.4s ease-in-out infinite;
+      user-select:none;
+    }
+    @keyframes bop{
+      0%,100%{transform: translateY(0) rotate(-6deg) scale(1)}
+      50%{transform: translateY(-6px) rotate(6deg) scale(1.04)}
+    }
+
+    .msg{
+      min-height: 44px;
+      margin: 12px auto 8px;
+      padding: 10px 12px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.8);
+      border: 1px solid rgba(58,11,38,0.08);
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+
+    .btnrow{
+      display:flex;
+      gap: 12px;
+      justify-content:center;
+      align-items:center;
+      flex-wrap:wrap;
+      margin-top: 10px;
+      padding-bottom: 6px;
+    }
+    button{
+      appearance:none;
+      border:none;
+      border-radius: 999px;
+      padding: 14px 18px;
+      font-weight: 900;
+      font-size: 16px;
+      cursor:pointer;
+      box-shadow: 0 10px 28px rgba(58,11,38,.18);
+      transition: transform .12s ease, filter .12s ease, width .12s ease;
+      user-select:none;
+      touch-action: manipulation;
+    }
+    #yes{
+      background: linear-gradient(135deg, var(--yes), var(--yes2));
+      color: white;
+      min-width: 170px;
+    }
+    #yes:active{ transform: scale(0.96) }
+    #no{
+      background: rgba(139,43,95,0.12);
+      color: var(--no);
+      border: 1px solid rgba(139,43,95,0.22);
+      min-width: 130px;
+      position: relative;
+    }
+    #no:active{ transform: scale(0.96) }
+
+    .shake{
+      animation: shake .22s linear 1;
+    }
+    @keyframes shake{
+      0%{transform: translateX(0)}
+      25%{transform: translateX(-10px)}
+      50%{transform: translateX(10px)}
+      75%{transform: translateX(-6px)}
+      100%{transform: translateX(0)}
+    }
+
+    /* full-screen success modal */
+    .modal{
+      position:fixed;
+      inset:0;
+      display:none;
+      place-items:center;
+      padding: 22px;
+      background: rgba(255, 200, 230, 0.55);
+      backdrop-filter: blur(8px);
+      z-index: 999;
+    }
+    .modal.show{ display:grid; }
+    .card{
+      width:min(620px, 94vw);
+      border-radius: 30px;
+      padding: 18px;
+      background: rgba(255,255,255,0.84);
+      border: 1px solid rgba(255,61,154,0.22);
+      box-shadow: var(--shadow);
+      text-align:center;
+      overflow:hidden;
+      position:relative;
+    }
+    .card h2{
+      margin: 6px 0 8px;
+      font-size: clamp(22px, 4.6vw, 34px);
+      letter-spacing:-0.02em;
+    }
+    .card p{
+      margin: 0 auto 12px;
+      opacity:.92;
+      font-weight:700;
+    }
+    .pic{
+      width:min(520px, 94vw);
+  aspect-ratio: auto;
+      margin: 10px auto 12px;
+      border-radius: 24px;
+      background:
+        radial-gradient(circle at 20% 20%, rgba(255,61,154,.25), transparent 45%),
+        radial-gradient(circle at 80% 70%, rgba(255,118,185,.22), transparent 48%),
+        linear-gradient(135deg, rgba(255,235,245,1), rgba(255,210,232,1));
+      border: 1px solid rgba(255,61,154,0.18);
+      display:grid;
+      place-items:center;
+      position:relative;
+      overflow:hidden;
+    }
+    .pic .big{
+      font-size: 74px;
+      animation: spinpop 1.6s ease-in-out infinite;
+      user-select:none;
+    }
+    @keyframes spinpop{
+      0%,100%{transform: rotate(-8deg) scale(1)}
+      50%{transform: rotate(10deg) scale(1.08)}
+    }
+
+    .confetti{
+      position:absolute;
+      inset:-40px;
+      pointer-events:none;
+      opacity:.9;
+      background:
+        radial-gradient(circle, rgba(255,61,154,.9) 0 3px, transparent 4px) 0 0/42px 42px,
+        radial-gradient(circle, rgba(255,118,185,.9) 0 3px, transparent 4px) 21px 21px/42px 42px,
+        radial-gradient(circle, rgba(58,11,38,.55) 0 2px, transparent 3px) 10px 30px/54px 54px;
+      mask-image: linear-gradient(to bottom, transparent, black 18%, black 70%, transparent);
+      animation: confettiMove 2.4s linear infinite;
+    }
+    @keyframes confettiMove{
+      from{transform: translateY(-20px)}
+      to{transform: translateY(40px)}
+    }
+
+    .tiny{
+      font-size: 12px;
+      opacity:.72;
+      margin-top: 10px;
+    }
+
+    /* makes the no button "free" to move on the screen */
+    .floating-no{
+      position: fixed !important;
+      z-index: 50;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="wrap" role="main" aria-live="polite">
+    <h1>Will you be my valentine? 💘</h1>
+    <div class="sub">Warning: this page is aggressively pink and emotionally manipulative.</div>
+
+    <div class="gifbox" aria-hidden="true">
+      <img id="mainImg" src="to-ask/vday1.jpg"
+           style="width:100%; height:100%; object-fit:cover; border-radius:24px;">
+    </div>
+
+    <div class="msg" id="msg">Choose wisely. (There is one correct answer.)</div>
+
+    <div class="btnrow">
+      <button id="yes">YES!! 💞</button>
+      <button id="no">no 😐</button>
+    </div>
+
+    <div class="tiny">Tip: Works on phones. “No” is a trap.</div>
+  </div>
+
+  <div class="modal" id="modal" role="dialog" aria-modal="true">
+    <div class="card">
+      <div class="confetti" aria-hidden="true"></div>
+      <h2>OMG YAYYYYY 💖💖💖</h2>
+      <p>You are now legally my valentine. No takebacks.</p>
+      <div class="pic" aria-hidden="true">
+        <img src="if-yes/vday3.jpg"
+             style="width:100%; height:100%; object-fit:contain; border-radius:24px; background:#000;">
+      </div>
+      
+      <p>Screenshot this and send it to me as proof 😈</p>
+    </div>
+  </div>
+
+<script>
+  // --- chaotic heart background ---
+  const HEARTS = ["💗","💖","💘","💕","💞","💓","❤️","🩷","🌸","✨"];
+  function spawnHeart() {
+    const h = document.createElement("div");
+    h.className = "heart";
+    h.textContent = HEARTS[Math.floor(Math.random() * HEARTS.length)];
+    const left = Math.random() * 100;
+    const size = 14 + Math.random() * 22;
+    const duration = 4 + Math.random() * 6;
+    h.style.left = left + "vw";
+    h.style.bottom = (-10 - Math.random()*20) + "vh";
+    h.style.fontSize = size + "px";
+    h.style.animationDuration = duration + "s";
+    document.body.appendChild(h);
+    setTimeout(() => h.remove(), duration * 1000);
+  }
+  setInterval(spawnHeart, 260);
+
+  // --- core interaction ---
+  const askImg = document.getElementById("askImg");
+
+  const msgEl = document.getElementById("msg");
+  const yesBtn = document.getElementById("yes");
+  const noBtn  = document.getElementById("no");
+  const modal  = document.getElementById("modal");
+
+  const noLines = [
+    "Oh… interesting choice. 😃",
+    "Wrong. Try again. 🩷",
+    "Be so serious right now.",
+    "That button is for decoration.",
+    "No?? In THIS economy??",
+    "I’m telling the group chat.",
+    "Your finger slipped. I forgive you.",
+    "Okay but like… why would you do that?",
+    "This is hate crime behavior.",
+    "No has been temporarily disabled for maintenance 💅",
+  ];
+
+  let noCount = 0;
+
+  function clamp(v, min, max){ return Math.min(max, Math.max(min, v)); }
+
+  function placeNoRandom() {
+    // Make the No button float around the screen (works on mobile).
+    noBtn.classList.add("floating-no");
+
+    const rect = noBtn.getBoundingClientRect();
+    const pad = 12;
+
+    const maxX = window.innerWidth  - rect.width  - pad;
+    const maxY = window.innerHeight - rect.height - pad;
+
+    // avoid placing directly under the yes button area by biasing random
+    const x = Math.random() * maxX;
+    const y = Math.random() * maxY;
+
+    noBtn.style.left = clamp(x, pad, maxX) + "px";
+    noBtn.style.top  = clamp(y, pad, maxY) + "px";
+  }
+
+  function growYes() {
+    // grows fast so they "feel" forced but still playful
+    const scale = 1 + Math.min(noCount, 7) * 0.12;
+    yesBtn.style.transform = `scale(${scale})`;
+    yesBtn.style.filter = `brightness(${1 + Math.min(noCount, 6) * 0.05})`;
+  }
+
+  noBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+    noCount++;
+    
+    const mainImg = document.getElementById("mainImg");
+if (noCount === 1 && mainImg) {
+  mainImg.src = "if-no/vday2.JPG"; // match your file name exactly
+}
+
+    
+
+    msgEl.textContent = noLines[Math.min(noCount-1, noLines.length-1)];
+    msgEl.classList.remove("shake");
+    void msgEl.offsetWidth; // restart animation
+    msgEl.classList.add("shake");
+
+    growYes();
+
+    // First 2 clicks: roast them in place.
+    // After that: the "No" button starts teleporting.
+    if (noCount >= 3) placeNoRandom();
+
+    // After enough attempts: remove "No" or convert it.
+    if (noCount === 6) {
+      msgEl.textContent = "Congrats! You unlocked: NO DOESN'T WORK 🎉";
+      
+      noBtn.textContent = "no (broken) 💔";
+      noBtn.disabled = true;
+      noBtn.style.opacity = 0.55;
+      noBtn.style.cursor = "not-allowed";
+    }
+
+    if (noCount >= 7) {
+      // optional final chaos: the No button vanishes completely
+      noBtn.style.display = "none";
+      msgEl.textContent = "No has left the chat. 💅 Click YES.";
+    }
+  });
+
+  yesBtn.addEventListener("click", () => {
+    modal.classList.add("show");
+    msgEl.textContent = "Correct choice 😌💞";
+  });
+
+  // tap outside modal closes it (optional)
+  modal.addEventListener("click", () => modal.classList.remove("show"));
+
+  // make sure No is on screen after rotation/resizing
+  window.addEventListener("resize", () => {
+    if (noCount >= 3 && !noBtn.disabled && noBtn.style.display !== "none") {
+      placeNoRandom();
+    }
+  });
+</script>
+</body>
+</html>
